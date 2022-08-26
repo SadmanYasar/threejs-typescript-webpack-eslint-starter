@@ -52,6 +52,9 @@ module.exports = {
         new CssMinimizerPlugin(),
     ],
     devServer: {
+        client: {
+            webSocketURL: 'wss://sadmanyasar-portfolio-prototype-j9qv5xpvwj5cq6q6-3000.githubpreview.dev:3000/ws',
+        },
         static: path.resolve(__dirname, 'build'),
         compress: true,
         port: 3000,
