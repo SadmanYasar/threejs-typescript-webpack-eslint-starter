@@ -1,5 +1,4 @@
 import './styles/style.css';
-
 import {
     AxesHelper,
     BoxGeometry,
@@ -30,10 +29,6 @@ const onMouseMove = (event: { clientX: number; clientY: number; }) => {
 };
 document.addEventListener('mousemove', onMouseMove, false);
 
-//axeshelper
-const axesHelper = new AxesHelper(1000);
-scene.add(axesHelper);
-
 // responsiveness
 const onWindowResize = () => {
     camera.aspect = contendor.clientWidth / contendor.clientHeight;
@@ -43,10 +38,6 @@ const onWindowResize = () => {
     renderer.setSize(contendor.clientWidth, contendor.clientHeight);
 };
 window.addEventListener('resize', onWindowResize, false);
-
-// stats
-const stats = Stats();
-document.body.appendChild(stats.dom);
 
 // camera
 const camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.8, 1000);
@@ -75,21 +66,35 @@ controls.update();
 contendor.appendChild(renderer.domElement);
 
 /*
-====
+=========================================
 GUI
-====
+
+For prod, use environment variable 
+that controls viewing these debug stuffs.
+=========================================
 */
-const gui = new GUI();
-const cubeFolder = gui.addFolder('Cube');
-cubeFolder.add(cube.rotation, 'x', 0, Math.PI * 2);
-cubeFolder.add(cube.rotation, 'y', 0, Math.PI * 2);
-cubeFolder.add(cube.rotation, 'z', 0, Math.PI * 2);
-cubeFolder.open();
-const cameraFolder = gui.addFolder('Camera');
-cameraFolder.add(camera.position, 'x', 0, 100);
-cameraFolder.add(camera.position, 'y', 0, 100);
-cameraFolder.add(camera.position, 'z', 0, 100);
-cameraFolder.open();
+let stats: Stats;
+console.log(process.env.DEBUG);
+if (process.env.DEBUG === "TRUE") {
+    //axeshelper
+    const axesHelper = new AxesHelper(1000);
+    scene.add(axesHelper);
+
+    stats = Stats();
+    document.body.appendChild(stats.dom);
+
+    const gui = new GUI();
+    const cubeFolder = gui.addFolder('Cube');
+    cubeFolder.add(cube.rotation, 'x', 0, Math.PI * 2);
+    cubeFolder.add(cube.rotation, 'y', 0, Math.PI * 2);
+    cubeFolder.add(cube.rotation, 'z', 0, Math.PI * 2);
+    cubeFolder.open();
+    const cameraFolder = gui.addFolder('Camera');
+    cameraFolder.add(camera.position, 'x', 0, 100);
+    cameraFolder.add(camera.position, 'y', 0, 100);
+    cameraFolder.add(camera.position, 'z', 0, 100);
+    cameraFolder.open();
+}
 
 const animate = () => {
     target.x = (1 - mouse.x) * 0.001;
@@ -98,7 +103,9 @@ const animate = () => {
     controls.update();
     renderer.render(scene, camera);
 
-    stats.update();
+    if (process.env.DEBUG === "TRUE") {
+        stats.update();
+    }
 
     window.requestAnimationFrame(animate);
 };
